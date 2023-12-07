@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
 #include <limits>
+#include "Test1.cpp"
 
-// Шаблон для хранения элемента таблицы
 template <typename T>
 struct HashNode {
     int key;
@@ -11,124 +11,26 @@ struct HashNode {
     HashNode(int k, const T& v) : key(k), value(v), next(nullptr) {}
 };
 
-// Шаблон для хеш-таблицы
+
 template <typename T>
 class HashTable {
 private:
-    int tableSize;  // Размер таблицы
+    int tableSize;  
     HashNode<T>** table;
 
 public:
-    HashTable() : tableSize(100), table(new HashNode<T>* [100]) {
-        // Инициализация всех элементов массива nullptr
-        for (int i = 0; i < tableSize; ++i) {
-            table[i] = nullptr;
-        }
-    }
+    HashTable();
+    explicit HashTable(int size);
+    ~HashTable();
 
-    explicit HashTable(int size) : tableSize(size) {
-        if (size <= 0) {
-            std::cerr << "Некорректный размер таблицы. Используется значение по умолчанию (100).\n";
-            tableSize = 100;  // Используем значение по умолчанию
-        }
-
-        // Выделение памяти для массива ячеек таблицы
-        table = new HashNode<T>*[tableSize];
-        for (int i = 0; i < tableSize; ++i) {
-            table[i] = nullptr;
-        }
-    }
-
-    // Деструктор для освобождения выделенной памяти
-    ~HashTable() {
-        for (int i = 0; i < tableSize; ++i) {
-            HashNode<T>* current = table[i];
-            while (current != nullptr) {
-                HashNode<T>* temp = current;
-                current = current->next;
-                delete temp;
-            }
-        }
-        delete[] table;
-    }
-
-    // Функция для вывода всех элементов из хеш-таблицы
-    void printAllElements() const {
-        std::cout << "\nВсе элементы таблицы:\n";
-
-        for (int i = 0; i < tableSize; ++i) {
-            HashNode<T>* current = table[i];
-            while (current != nullptr) {
-                std::cout << "Ключ: " << current->key << ", Значение: " << current->value << "\n";
-                current = current->next;
-            }
-        }
-    }
-
-    // Получение размера таблицы
-    int getTableSize() const {
-        return tableSize;
-    }
-
-    // Вставка элемента в таблицу
-   // Вставка элемента в таблицу
-    void insert(int key, const T& value) {
-        int index = hashFunction(key);
-        HashNode<T>* newNode = new HashNode<T>(key, value);
-        HashNode<T>* current = table[index];
-
-        // Проверка наличия элемента с таким ключом
-        HashNode<T>* prev = nullptr;
-        while (current != nullptr) {
-            if (current->key == key) {
-                if (prev == nullptr) {
-                    table[index] = newNode;
-                }
-                else {
-                    prev->next = newNode;
-                }
-                newNode->next = current->next;
-                delete current;
-                return;
-            }
-            prev = current;
-            current = current->next;
-        }
-
-        // Вставка нового элемента
-        newNode->next = table[index];
-        table[index] = newNode;
-    }
-
-    // Удаление элемента по ключу
-    bool remove(int key) {
-        int index = hashFunction(key);
-        HashNode<T>* current = table[index];
-        HashNode<T>* prev = nullptr;
-
-        while (current != nullptr) {
-            if (current->key == key) {
-                if (prev == nullptr) {
-                    table[index] = current->next;
-                }
-                else {
-                    prev->next = current->next;
-                }
-                delete current;
-                return true;  // Элемент успешно удален
-            }
-            prev = current;
-            current = current->next;
-        }
-
-        return false;  // Элемент не найден
-    }
+    void printAllElements() const;
+    int getTableSize() const;
+    void insert(int key, const T& value);
+    bool remove(int key);
 
 private:
-    // Функция хеширования
-    int hashFunction(int key) const {
-        return key % tableSize;
-    }
+
+    int hashFunction(int key) const;
 };
 
 int main() {
@@ -203,4 +105,111 @@ int main() {
     }
 
     return 0;
+}
+
+template <typename T>
+HashTable<T>::HashTable() : tableSize(100), table(new HashNode<T>* [100]) {
+    for (int i = 0; i < tableSize; ++i) {
+        table[i] = nullptr;
+    }
+}
+
+template <typename T>
+HashTable<T>::HashTable(int size) : tableSize(size) {
+    if (size <= 0) {
+        std::cerr << "Некорректный размер таблицы. Используется значение по умолчанию (100).\n";
+        tableSize = 100;
+    }
+
+    table = new HashNode<T>*[tableSize];
+    for (int i = 0; i < tableSize; ++i) {
+        table[i] = nullptr;
+    }
+}
+
+template <typename T>
+HashTable<T>::~HashTable() {
+    for (int i = 0; i < tableSize; ++i) {
+        HashNode<T>* current = table[i];
+        while (current != nullptr) {
+            HashNode<T>* temp = current;
+            current = current->next;
+            delete temp;
+        }
+    }
+    delete[] table;
+}
+
+template <typename T>
+void HashTable<T>::printAllElements() const {
+    std::cout << "\nВсе элементы таблицы:\n";
+
+    for (int i = 0; i < tableSize; ++i) {
+        HashNode<T>* current = table[i];
+        while (current != nullptr) {
+            std::cout << "Ключ: " << current->key << ", Значение: " << current->value << "\n";
+            current = current->next;
+        }
+    }
+}
+
+template <typename T>
+int HashTable<T>::getTableSize() const {
+    return tableSize;
+}
+
+template <typename T>
+void HashTable<T>::insert(int key, const T& value) {
+    int index = hashFunction(key);
+    HashNode<T>* newNode = new HashNode<T>(key, value);
+    HashNode<T>* current = table[index];
+    HashNode<T>* prev = nullptr;
+
+    while (current != nullptr) {
+        if (current->key == key) {
+            if (prev == nullptr) {
+                table[index] = newNode;
+            }
+            else {
+                prev->next = newNode;
+            }
+            newNode->next = current->next;
+            delete current;
+            return;
+        }
+        prev = current;
+        current = current->next;
+    }
+
+    newNode->next = table[index];
+    table[index] = newNode;
+}
+
+template <typename T>
+bool HashTable<T>::remove(int key) {
+    int index = hashFunction(key);
+    HashNode<T>* current = table[index];
+    HashNode<T>* prev = nullptr;
+
+    while (current != nullptr) {
+        if (current->key == key) {
+            if (prev == nullptr) {
+                table[index] = current->next;
+            }
+            else {
+                prev->next = current->next;
+            }
+            delete current;
+            return true;
+        }
+        prev = current;
+        current = current->next;
+    }
+
+    return false;
+}
+
+template <typename T>
+int HashTable<T>::hashFunction(int key) const {
+    return key % tableSize;
 }
