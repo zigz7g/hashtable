@@ -1,4 +1,4 @@
-#include <iostream>
+п»ї#include <iostream>
 #include <string>
 #include <limits>
 #include "Test1.cpp"
@@ -15,7 +15,7 @@ struct HashNode {
 template <typename T>
 class HashTable {
 private:
-    int tableSize;  
+    int tableSize;
     HashNode<T>** table;
 
 public:
@@ -37,70 +37,70 @@ int main() {
     setlocale(LC_ALL, "Russian");
 
     int tableSize;
-    std::cout << "Введите размер таблицы: ";
+    std::cout << "Enter table sie: ";
     std::cin >> tableSize;
 
     HashTable<std::string> myHashTable(tableSize);
 
     while (true) {
-        // Выводим меню
-        std::cout << "\n===== Меню =====\n";
-        std::cout << "1. Добавить/редактировать элемент\n";
-        std::cout << "2. Удалить элемент\n";
-        std::cout << "3. Вывести все элементы\n";
-        std::cout << "4. Выйти\n";
-        std::cout << "Выберите действие: ";
+        
+        std::cout << "\n===== Menu =====\n";
+        std::cout << "1. Enter or element\n";
+        std::cout << "2. Delete element\n";
+        std::cout << "3. Show all elementsГ»\n";
+        std::cout << "4. Exit\n";
+        std::cout << "Choose action: ";
 
         int choice;
         std::cin >> choice;
 
         switch (choice) {
         case 1: {
-            // Добавление/редактирование элемента
+         
             int key;
             std::string value;
 
-            std::cout << "Введите ключ: ";
+            std::cout << "Enter key: ";
             std::cin >> key;
 
-            std::cout << "Введите значение ";
+            std::cout << " Enter value";
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::getline(std::cin, value);
 
             myHashTable.insert(key, value);
 
-            std::cout << "Элемент добавлен/отредактирован\n";
+            std::cout << "Element added/ edit\n";
             break;
         }
 
         case 2: {
-            // Удаление элемента
+            
             int key;
-            std::cout << "Введите ключ элемента для удаления: ";
+            std::cout << "Enter key for delete: ";
             std::cin >> key;
 
             if (myHashTable.remove(key)) {
-                std::cout << "Элемент успешно удален\n";
+                std::cout << "Deleted successfully\n";
             }
             else {
-                std::cout << "Элемент не найден\n";
+                std::cout << "Element not found\n";
             }
             break;
         }
 
         case 3: {
-            // Вывод всех элементов
+            
             myHashTable.printAllElements();
             break;
         }
 
         case 4: {
-            // Выход из программы
+            /
             return 0;
         }
 
         default:
-            std::cout << "Некорректный выбор, попробуйте снова\n";
+            std::cout << "Incorrect choice, try again.\n";
         }
     }
 
@@ -117,7 +117,7 @@ HashTable<T>::HashTable() : tableSize(100), table(new HashNode<T>* [100]) {
 template <typename T>
 HashTable<T>::HashTable(int size) : tableSize(size) {
     if (size <= 0) {
-        std::cerr << "Некорректный размер таблицы. Используется значение по умолчанию (100).\n";
+        std::cerr << "Incorrect table size. Default size = 100.\n";
         tableSize = 100;
     }
 
@@ -142,12 +142,12 @@ HashTable<T>::~HashTable() {
 
 template <typename T>
 void HashTable<T>::printAllElements() const {
-    std::cout << "\nВсе элементы таблицы:\n";
+    std::cout << "\nAll elements:\n";
 
     for (int i = 0; i < tableSize; ++i) {
         HashNode<T>* current = table[i];
         while (current != nullptr) {
-            std::cout << "Ключ: " << current->key << ", Значение: " << current->value << "\n";
+            std::cout << "Key: " << current->key << ", Value: " << current->value << "\n";
             current = current->next;
         }
     }
